@@ -5,17 +5,27 @@
 
 #define DHT11_DEBUG 1
 
+#define DHT_TimerResolution 0.000001 /* sec */
+#define DHT_Time2TimerTick(sec) ((uint32_t)((sec) / (DHT_TimerResolution)))
+#define DHT_Time2TimerTickUs(us) DHT_Time2TimerTick((us)*0.000001)
+#define DHT_TimeCheck(timer, us, diff) (((timer) >= (DHT_Time2TimerTickUs((us)-(diff))) && ((timer) <= (DHT_Time2TimerTickUs((us)+(diff))))
+
 #define DHT11_run_period_time_us 1000
 #define DHT11_PULSE_LOW_CTR 21 /* min 18/20ms */
 #define DHT11_PULSE_TIMEOUT 8000 /* 8000 us <= 80 bit * 100us */
 #define DHT11_STANDBY_CNT 2500 /* 2.5 sec standby after the last measurement */
 
 /* Port-B - pin 8 - DHT11 - data - TIM4 - CH3/CH4 */
-#define DHT11_PORT GPIOB, 8
-#define DHT11_OUT_INIT() GPIO_PortInit_OC(DHT11_PORT)
+#define DHT11_PORT_IN  GPIOB, 8
+#define DHT11_PORT_OUT GPIOB, 9
+#define DHT11_PORT_INIT() \
+    do { \
+        GPIO_PortInit_Out(DHT11_PORT_OUT); \
+        GPIO_PortInit_In(DHT11_PORT_IN); \
+    } while(0)
 //#define DHT11_OUT_INIT() GPIO_PortInit_Out(DHT11_PORT)
-#define DHT11_OUT_LOW()  GPIO_Set(DHT11_PORT, 0)
-#define DHT11_OUT_HIGH() GPIO_Set(DHT11_PORT, 1)
+#define DHT11_OUT_LOW()  GPIO_Set(DHT11_PORT_OUT, 1) /* inerting by external circuit */
+#define DHT11_OUT_HIGH() GPIO_Set(DHT11_PORT_OUT, 0)
 #define DHT11_CC_IRQ_ENABLE() \
     do { \
         TIM4_SR_CC3IF_Reset(); \
@@ -32,7 +42,7 @@
     ((TIM4_Cnt_Get() - dht11.DHT11_lastTimer) & 0xFFFF)
 
 //#define DHT11_WAIT_US(us)
-#define DHT11_ANSWER_PULSE_CNT 80
+#define DHT11_ANSWER_PULSE_CNT 84
 #define DHT11_IRQ_CNT_MAX 128
 
 #define TIM4_CC3IF_Callback() \
