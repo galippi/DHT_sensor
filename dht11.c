@@ -117,6 +117,10 @@ typedef struct {
 }t_dbg2;
 extern t_dbg2 dbg2;
 
+#ifndef DHT_Result_cb
+#define DHT_Result_cb() /* do nothing */
+#endif
+
 void dht11_run(void)
 {
     switch(dht11.state)
@@ -144,6 +148,7 @@ void dht11_run(void)
                     dht11_processResult();
                     dht11.state = e_DHT11_State_Standby;
                     dht11.counter = 0;
+                    DHT_Result_cb();
                 }else{
                     DHT11_ERROR(e_DHT11_error_Timeout, dht11.counter);
                     dht11.state = e_DHT11_State_Error;
@@ -189,6 +194,11 @@ t_DHT11_status dht11_request(void)
         DHT11_ERROR(e_DHT11_error_RequestIsRejected, 0);
         return e_DHT11_status_Error;
     }
+}
+
+t_DHT11_Result dht_getResult(void)
+{
+    return dht11.result;
 }
 
 void dht11_IRQ_cb(uint16_t timer)

@@ -35,5 +35,6 @@ extern void dht11_init(void);
 extern void dht11_run(void);
 extern void dht11_IRQ_cb(uint16_t timer);
 extern t_DHT11_status dht11_request(void);
+extern t_DHT11_Result dht_getResult(void);
 
 #endif /* _DHT11_H_ */
