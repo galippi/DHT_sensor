@@ -12,6 +12,9 @@ typedef enum {
 typedef struct {
     uint16_t temperature;
     uint16_t humidity;
+#if defined(DHT_ResultTimeoutCtr)
+    uint8_t timeoutCtr;
+#endif
 }t_DHT11_Result;
 
 typedef enum {

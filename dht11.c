@@ -25,6 +25,8 @@ typedef struct {
     uint16_t dt[DHT11_IRQ_CNT_MAX + 3];
     t_DHT11_error errorReason;
     uint32_t addData;
+    uint16_t resultCtr;
+    uint16_t resultChecksumCtr;
 }t_DHT11_Debug;
 
 #if 1
@@ -68,8 +70,8 @@ typedef struct {
 
 t_DHT11 dht11;
 
-#ifdef DHT11_DEBUG
-#else
+#ifndef DHT_ErrorResultChecksum_cb
+#define DHT_ErrorResultChecksum_cb() // do nothing
 #endif
 
 static void dht11_processResult(void)
@@ -78,10 +80,26 @@ static void dht11_processResult(void)
     if (dht11.rawResult[4] == sum) {
         dht11.result.temperature = (dht11.rawResult[2] * 10) + dht11.rawResult[3];
         dht11.result.humidity = (dht11.rawResult[0] * 10) + dht11.rawResult[1];
-    }else{
-        dht11.result.temperature = DHT11_TEMPERATURE_NA;
-        dht11.result.humidity = DHT11_HUMIDITY_NA;
+#ifdef DHT11_DEBUG
+        dht11.dbg.resultCtr++;
+#endif
+        }else{
+        DHT_ErrorResultChecksum_cb();
+#if defined(DHT_ResultTimeoutCtr)
+        if (dht11.result.timeoutCtr >= DHT_ResultTimeoutCtr) {
+#endif // defined(DHT_ResultTimeoutCtr)
+            dht11.result.temperature = DHT11_TEMPERATURE_NA;
+            dht11.result.humidity = DHT11_HUMIDITY_NA;
+#ifdef DHT11_DEBUG
+        dht11.dbg.resultChecksumCtr++;
+#endif
+#if defined(DHT_ResultTimeoutCtr)
+        }else{
+            dht11.result.timeoutCtr++;
+        }
+#endif // defined(DHT_ResultTimeoutCtr)
     }
+
 }
 
 void dht11_init(void)
