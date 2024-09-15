@@ -10,10 +10,11 @@
 #define DHT_Time2TimerTickUs(us) DHT_Time2TimerTick((us)*0.000001)
 #define DHT_TimeCheck(timer, us, diff) (((timer) >= (DHT_Time2TimerTickUs((us)-(diff))) && ((timer) <= (DHT_Time2TimerTickUs((us)+(diff))))
 
-#define DHT11_run_period_time_us 1000
-#define DHT11_PULSE_LOW_CTR 21 /* min 18/20ms */
-#define DHT11_PULSE_TIMEOUT 8000 /* 8000 us <= 80 bit * 100us */
-#define DHT11_STANDBY_CNT 2500 /* 2.5 sec standby after the last measurement */
+#define DHT11_run_period_time 0.001
+#define DHT11_run_period_time_us (uint32_t)((DHT11_run_period_time) / 0.000001)
+#define DHT11_PULSE_LOW_CTR (uint32_t)(0.021 / (DHT11_run_period_time)) /* min 18/20ms */
+#define DHT11_PULSE_TIMEOUT (uint32_t)(0.008 / (DHT_TimerResolution)) /* 8000 us <= 80 bit * 100us */
+#define DHT11_STANDBY_CNT (uint32_t)(2.5 / (DHT11_run_period_time)) /* 2.5 sec standby after the last measurement */
 
 /* Port-B - pin 8 - DHT11 - data - TIM4 - CH3/CH4 */
 #define DHT11_PORT_IN  GPIOB, 8
