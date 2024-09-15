@@ -3,6 +3,9 @@
 
 #include "dht11_conf.h"
 
+#define DHT_MODE_11 1
+#define DHT_MODE_22 2
+
 typedef enum {
     e_DHT11_status_Ok,
     e_DHT11_status_Pause,

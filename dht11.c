@@ -3,6 +3,10 @@
 #include "dht11.h"
 #include "gpio.h"
 
+#ifndef DHT_MODE
+#define DHT_MODE DHT_MODE_11
+#endif
+
 #define enum_packed enum
 
 typedef enum_packed {
@@ -78,8 +82,21 @@ static void dht11_processResult(void)
 {
     uint8_t sum = dht11.rawResult[0] + dht11.rawResult[1] + dht11.rawResult[2] + dht11.rawResult[3];
     if (dht11.rawResult[4] == sum) {
-        dht11.result.temperature = (dht11.rawResult[2] * 10) + dht11.rawResult[3];
+#if DHT_MODE == DHT_MODE_11
+        int16_t val = ((dht11.rawResult[2] & 0x7F) * 10) + dht11.rawResult[3];
+        if (dht11.rawResult[2] & 0x80)
+            val = -val;
+        dht11.result.temperature = val;
         dht11.result.humidity = (dht11.rawResult[0] * 10) + dht11.rawResult[1];
+#elif DHT_MODE == DHT_MODE_22
+        int16_t val = ((dht11.rawResult[2] & 0x7F) * 256) + dht11.rawResult[3];
+        if (dht11.rawResult[2] & 0x80)
+            val = -val;
+        dht11.result.temperature = val;
+        dht11.result.humidity = (dht11.rawResult[0] * 256) + dht11.rawResult[1];
+#else
+#error Invalid DHT_MODE!
+#endif
 #ifdef DHT11_DEBUG
         dht11.dbg.resultCtr++;
 #endif
