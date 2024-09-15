@@ -10,7 +10,7 @@
 #define DHT_Time2TimerTickUs(us) DHT_Time2TimerTick((us)*0.000001)
 #define DHT_TimeCheck(timer, us, diff) (((timer) >= (DHT_Time2TimerTickUs((us)-(diff))) && ((timer) <= (DHT_Time2TimerTickUs((us)+(diff))))
 
-#define DHT11_run_period_time 0.001
+#define DHT11_run_period_time 0.010
 #define DHT11_run_period_time_us (uint32_t)((DHT11_run_period_time) / 0.000001)
 #define DHT11_PULSE_LOW_CTR (uint32_t)(0.021 / (DHT11_run_period_time)) /* min 18/20ms */
 #define DHT11_PULSE_TIMEOUT (uint32_t)(0.008 / (DHT_TimerResolution)) /* 8000 us <= 80 bit * 100us */
