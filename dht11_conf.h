@@ -5,10 +5,10 @@
 
 #define DHT11_DEBUG 1
 
-#define DHT11_run_period_time_us 10000
-#define DHT11_PULSE_LOW_CTR 2 /* min 18/20ms */
+#define DHT11_run_period_time_us 1000
+#define DHT11_PULSE_LOW_CTR 21 /* min 18/20ms */
 #define DHT11_PULSE_TIMEOUT 8000 /* 8000 us <= 80 bit * 100us */
-#define DHT11_STANDBY_CNT 100 /* 1 sec standby after the last measurement */
+#define DHT11_STANDBY_CNT 2500 /* 2.5 sec standby after the last measurement */
 
 /* Port-B - pin 8 - DHT11 - data - TIM4 - CH3/CH4 */
 #define DHT11_PORT GPIOB, 8
